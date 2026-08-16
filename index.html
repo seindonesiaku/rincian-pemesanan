@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#5337f5">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Rincian Pemesanan">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <title>Rincian Pemesanan — Penjualan</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand"><span class="rp">Rp.</span><span>Rincian Pemesanan</span></div>
+      <nav>
+        <button class="nav-item" data-page="dashboard">⌂ <span>Dashboard</span><b>›</b></button>
+        <button class="nav-item active" data-page="penjualan">🛒 <span>Penjualan</span><b>›</b></button>
+        <button class="nav-item" data-page="produk">▣ <span>Produk</span><b>›</b></button>
+        <button class="nav-item" data-page="pelanggan">♙ <span>Pelanggan</span><b>›</b></button>
+        <button class="nav-item" data-page="ekspedisi">▱ <span>Ekspedisi</span><b>›</b></button>
+        <button class="nav-item" data-page="resest">↶ <span>Resest</span><b>›</b></button>
+        <button class="nav-item" data-page="diskon">◇ <span>Diskon</span><b>›</b></button>
+      </nav>
+      <button class="hide-sidebar" id="hideSidebar">‹‹ <span>Sembunyikan</span></button>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="hamburger" id="hamburger">☰</button>
+        <h1>Penjualan</h1>
+        <div class="search-wrap">
+          <span>⌕</span>
+          <input id="search" type="search" placeholder="Cari produk, kode, atau kategori..." autocomplete="off">
+          <kbd>Ctrl + K</kbd>
+        </div>
+        <button class="icon-btn" title="Notifikasi">♧<i>3</i></button>
+        <button class="icon-btn install-btn" title="Pasang aplikasi" id="installApp" hidden>⬇</button>
+        <button class="icon-btn" title="Layar penuh" id="fullscreen">⛶</button>
+        <div class="user"><div class="avatar">👨🏻</div><div><strong>Rizky Ananda</strong><small>Kasir</small></div><span>⌄</span></div>
+      </header>
+
+      <section class="content">
+        <div class="products-panel">
+          <div class="categories" id="categories">
+            <button class="category active" data-cat="Semua">▦ &nbsp;Semua Produk</button>
+            <button class="category" data-cat="Makanan">♜ &nbsp;Makanan</button>
+            <button class="category" data-cat="Minuman">▣ &nbsp;Minuman</button>
+            <button class="category" data-cat="Snack">◉ &nbsp;Snack</button>
+            <button class="category" data-cat="Kebutuhan">□ &nbsp;Kebutuhan</button>
+            <button class="category" data-cat="Lainnya">••• &nbsp;Lainnya</button>
+            <button class="filter" id="filterBtn">☷ &nbsp;Filter⌄</button>
+          </div>
+          <div class="tip">ⓘ &nbsp; Tip: Satuan produk mengikuti satuan yang sudah ditentukan pada daftar produk.</div>
+          <div class="product-grid" id="productGrid"></div>
+        </div>
+
+        <aside class="cart">
+          <div class="cart-head">
+            <h2>Keranjang Penjualan <span id="cartCount">0</span></h2>
+            <button id="clearCart">♜ &nbsp;Hapus Semua</button>
+          </div>
+          <div class="cart-items" id="cartItems"></div>
+          <div class="summary">
+            <div><span>Subtotal</span><strong id="subtotal">Rp 0</strong></div>
+            <div class="discount-row"><span>Diskon</span><strong id="discount">- Rp 0</strong></div>
+            <div><span>Pajak (10%)</span><strong id="tax">Rp 0</strong></div>
+            <hr>
+            <div class="total"><span>Total</span><strong id="total">Rp 0</strong></div>
+          </div>
+          <div class="payments">
+            <button class="pay active" data-pay="Tunai">▣<small>Tunai</small></button>
+            <button class="pay" data-pay="QRIS">▦<small>QRIS</small></button>
+            <button class="pay" data-pay="Kartu">▤<small>Kartu</small></button>
+            <button class="pay" data-pay="Lainnya">•••<small>Lainnya</small></button>
+          </div>
+          <button class="checkout" id="payBtn">Bayar (F2)</button>
+          <button class="pending" id="pendingBtn">♧ &nbsp; Simpan / Pending (F3)</button>
+        </aside>
+      </section>
+    </main>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script src="./script.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => navigator.serviceWorker.register("./service-worker.js"));
+    }
+    let deferredInstallPrompt = null;
+    window.addEventListener("beforeinstallprompt", (event) => {
+      event.preventDefault();
+      deferredInstallPrompt = event;
+      const btn = document.getElementById("installApp");
+      if (btn) btn.hidden = false;
+    });
+    document.addEventListener("click", async (event) => {
+      if (event.target.closest("#installApp") && deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        await deferredInstallPrompt.userChoice;
+        deferredInstallPrompt = null;
+        const btn = document.getElementById("installApp");
+        if (btn) btn.hidden = true;
+      }
+    });
+    window.addEventListener("appinstalled", () => {
+      const btn = document.getElementById("installApp");
+      if (btn) btn.hidden = true;
+    });
+  </script>
+</body>
+</html>
