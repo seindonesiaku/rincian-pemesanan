@@ -141,6 +141,13 @@ function bindSalesEvents(){
   $("pendingBtn").onclick = savePending;
 }
 
+document.addEventListener("click", e => {
+  const card = e.target.closest("[data-add-card]");
+  if (card && !e.target.closest("button[data-add]")) {
+    add(Number(card.dataset.addCard));
+  }
+});
+
 function add(id){
   const p=products.find(x=>x.id===id); if(!p)return;
   const item=cart.find(x=>x.id===id);
@@ -276,7 +283,7 @@ function renderPendingPage(){
   const pending=load(STORAGE.pending,[]);
   $("appContent").innerHTML=`<div class="page-card wide"><div class="page-head"><div><h2>Resest</h2><p>Kelola pesanan yang disimpan / pending.</p></div></div>
   <div class="table-card">${pending.map(p=>`<div class="pending-row"><div><b>${new Date(p.date).toLocaleString("id-ID")}</b><small>${p.items.reduce((a,i)=>a+i.qty,0)} item • ${p.payment}</small></div><button class="small-btn" data-restore="${p.id}">Kembalikan</button><button class="small-btn danger" data-delete-pending="${p.id}">Hapus</button></div>`).join("")||`<div class="empty-state">Tidak ada pesanan pending.</div>`}</div></div>`;
-  document.querySelectorAll("[data-restore]").forEach(b=>b.onclick=()=>{const all=load(STORAGE.pending,[]),p=all.find(x=>x.id===Number(b.dataset.restore));if(p){cart=JSON.parse(JSON.stringify(p.items));save(STORAGE.pending,all.filter(x=>x.id!==p.id));setPage("penjualan");toast("Pesanan dikembalikan ke keranjang")}});
+  document.querySelectorAll("[data-restore]").forEach(b=>b.onclick=()=>{const all=load(STORAGE.pending,[]),p=all.find(x=>x.id===Number(b.dataset.restore));if(p){cart=JSON.parse(JSON.stringify(p.items));save(STORAGE.pending,all.filter(x=>x.id!==p.id));setPage("penjualan");toast("Pesanan dikembalikan ke keranjang");}});
   document.querySelectorAll("[data-delete-pending]").forEach(b=>b.onclick=()=>{const all=load(STORAGE.pending,[]);save(STORAGE.pending,all.filter(x=>x.id!==Number(b.dataset.deletePending)));renderPendingPage();});
 }
 
